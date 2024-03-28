@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct TreeNode {
+    int val;
+    struct TreeNode* left;
+    struct TreeNode* right;
+};
+
+struct TreeNode* createNode(int val) {
+    struct TreeNode* newNode = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+    if (newNode == NULL) {
+        printf("Memory allocation failed");
+        exit(1);
+    }
+    newNode->val = val;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+void insert(struct TreeNode** root, int val) {
+    if (*root == NULL) {
+        *root = createNode(val);
+        return;
+    }
+    if (val < (*root)->val) {
+        insert(&((*root)->left), val);
+    } else {
+        insert(&((*root)->right), val);
+    }
+}
+
+struct TreeNode* removeNode(struct TreeNode* root, int key) {
+    if (root == NULL) return root;
+    
+    if (key < root->val) {
+        root->left = removeNode(root->left, key);
+    } else if (key > root->val) {
+        root->right = removeNode(root->right, key);
+    } else {
+        if (root->left == NULL) {
+            struct TreeNode* temp = root->right;
+            free(root);
+            return temp;
+        } else if (root->right == NULL) {
+            struct TreeNode* temp = root->left;
+            free(root);
+            return temp;
+        }
+        
+        struct TreeNode* temp = root->right;
+        while (temp && temp->left) {
+            temp = temp->left;
+        }
+        root->val = temp->val;
+        root->right = removeNode(root->right, temp->val);
+    }
+    return root;
+}
+
+int search(struct TreeNode* root, int target) {
+	if (root == NULL) return 0;
+	if (root->val == target) return 1;
+	if (target < root->val) return search(root->left, target);
+	return search(root->right, target);
+}
+
+Creating a new BST:0(1)
+Inserting the value n: 0(log n) on average, 0(n) in the worst case
+Removing the node with the value n: 0(log n) on average, 0(n) in the worst case
+Searching for a node in a BST size of n: 0(log n) on average, 0(n) in the worst case.
